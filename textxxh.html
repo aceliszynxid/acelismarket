@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Acelis Market</title>
+    <style>
+        /* --- RESET & BASE STYLE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        *:focus, *:active {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        body {
+            background-color: #0b1120;
+            color: #ffffff;
+            padding: 20px 16px;
+        }
+
+        .container {
+            max-width: 480px; 
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* --- SINKRONISASI OTOMATIS TAMPILAN KOMPUTER/DESKTOP --- */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 800px;
+                padding: 20px 0;
+            }
+            .katalog-grid {
+                gap: 24px;
+            }
+            .footer-content {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr;
+                gap: 40px;
+            }
+        }
+
+        /* --- LOADING SCREEN FULL LAYAR TIAP MASUK WEBSITE --- */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b1120;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .circle {
+            background-color: #38bdf8;
+            border-radius: 50%;
+            animation: pulseLoading 1.2s ease-in-out infinite;
+        }
+
+        /* Ukuran Berbeda: Besar, Sedang, Kecil */
+        .circle-large {
+            width: 20px;
+            height: 20px;
+            animation-delay: 0s;
+        }
+
+        .circle-medium {
+            width: 14px;
+            height: 14px;
+            animation-delay: 0.2s;
+        }
+
+        .circle-small {
+            width: 8px;
+            height: 8px;
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulseLoading {
+            0%, 100% {
+                transform: scale(0.6);
+                opacity: 0.4;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        /* --- ANIMASI FADE UP KATALOG BERMUNCULAN --- */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-card, 
+        .top-menu-row, 
+        .btn-full-menu, 
+        .partner-large-catalog, 
+        .btn-pink-to-blue, 
+        .section-divider, 
+        .admin-group-container, 
+        .katalog-grid {
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0; 
+        }
+
+        /* Delay agar katalog bermunculan secara bergantian setelah loading screen */
+        .hero-card { animation-delay: 1.6s; }
+        .top-menu-row { animation-delay: 1.65s; }
+        .btn-full-menu { animation-delay: 1.7s; }
+        .partner-large-catalog { animation-delay: 1.75s; }
+        .btn-pink-to-blue { animation-delay: 1.8s; }
+        .section-divider { animation-delay: 1.85s; }
+        .admin-group-container { animation-delay: 1.9s; }
+        .katalog-grid { animation-delay: 1.95s; }
+
+        .katalog-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            outline: none;
+        }
+
+        /* --- KATALOG PERSEGI BESAR (STROKE DIHILANGKAN) --- */
+        .hero-card {
+            background-color: #0c152b;
+            border: none; 
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .badge-premium {
+            background-color: rgba(29, 99, 237, 0.15);
+            border: 1px solid rgba(29, 99, 237, 0.3);
+            color: #38bdf8;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .badge-icon {
+            width: 12px;
+            height: 12px;
+            background-color: #38bdf8;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+
+        .hero-title {
+            font-family: 'Cabinet Grotesk', 'Impact', system-ui, -apple-system, sans-serif;
+            font-size: 34px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+            text-transform: capitalize;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-desc {
+            font-size: 13.5px;
+            color: #94a3b8;
+            font-weight: 400;
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+        }
+
+        /* --- MENU ATAS --- */
+        .top-menu-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .btn-top-menu {
+            background: linear-gradient(90deg, #1d63ed, #38bdf8);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 10px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(29, 99, 237, 0.2);
+            transition: opacity 0.2s;
+        }
+
+        /* --- BAGIAN LAYANAN DIBAWAH SENDIRI (MENYALA & STROKE DIHILANGKAN) --- */
+        .btn-full-menu {
+            background: linear-gradient(90deg, #0f172a, #1e293b);
+            border: none; 
+            border-radius: 12px;
+            padding: 14px 10px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            box-shadow: none; 
+            transition: background-color 0.2s;
+        }
+
+        .btn-full-menu:hover {
+            background-color: #1e293b;
+        }
+
+        /* --- KATALOG BESAR DAFTAR PARTNER (STROKE DIHILANGKAN) --- */
+        .partner-large-catalog {
+            background: linear-gradient(180deg, rgba(12, 21, 43, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: none; 
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .partner-card-row {
+            background: rgba(30, 41, 59, 0.3);
+            border: none; 
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+
+        .partner-card-row:hover {
+            background: rgba(30, 41, 59, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .partner-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .partner-avatar-initial {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1d63ed, #38bdf8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(29, 99, 237, 0.3);
+            flex-shrink: 0;
+        }
+
+        .partner-info {
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+        }
+
+        .partner-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .partner-desc-text {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 400;
+            margin-top: 1px;
+        }
+
+        .btn-pink-to-blue {
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 10px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            transition: opacity 0.2s;
+        }
+
+        .btn-top-menu:hover, .btn-pink-to-blue:hover {
+            opacity: 0.9;
+        }
+
+        /* --- HUBUNGI ADMIN --- */
+        .section-divider {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: #38bdf8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 32px 0 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .section-divider::before, .section-divider::after {
+            content: '';
+            height: 1px;
+            width: 20px;
+            background: linear-gradient(90deg, transparent, #38bdf8);
+        }
+        .section-divider::after {
+            background: linear-gradient(90deg, #38bdf8, transparent);
+        }
+
+        /* --- ADMIN CONTAINER (STROKE DIHILANGKAN) --- */
+        .admin-group-container {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%);
+            border: none; 
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 14px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .admin-row {
+            background: rgba(30, 41, 59, 0.4);
+            border: none; 
+            border-radius: 16px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .admin-row:hover {
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateX(2px);
+        }
+
+        .admin-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .admin-avatar-wrapper {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(29, 99, 237, 0.2), rgba(56, 189, 248, 0.1));
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #38bdf8;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .admin-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.2px;
+            line-height: 1.2;
+        }
+
+        .admin-detail {
+            font-size: 10px;
+            color: #94a3b8;
+            font-weight: 400;
+            letter-spacing: 0.1px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .admin-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: #34d399;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 5px;
+            height: 5px;
+            background-color: #34d399;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #34d399;
+        }
+
+        .action-arrow {
+            color: #64748b;
+            font-size: 12px;
+            transition: color 0.2s;
+        }
+        .admin-row:hover .action-arrow {
+            color: #38bdf8;
+        }
+
+        /* --- 2 KOLOM KATALOG KOTAK (STROKE DIHILANGKAN) --- */
+        .katalog-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .katalog-card {
+            background-color: #0c152b;
+            border: none; 
+            border-radius: 24px;
+            padding: 24px 16px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .katalog-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .icon-blue-dark {
+            background-color: rgba(29, 99, 237, 0.15);
+            color: #38bdf8;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .card-desc {
+            font-size: 11.5px;
+            color: #64748b;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .card-action-link {
+            font-size: 12px;
+            font-weight: 600;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        /* --- SEKSYEN FOOTER PROFESIONAL --- */
+        .custom-footer {
+            border-top: 1px solid #1e293b;
+            padding-top: 32px;
+            margin-top: 20px;
+            color: #94a3b8;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .footer-brand-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-logo span {
+            color: #38bdf8;
+        }
+
+        .footer-desc {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #94a3b8;
+            margin-bottom: 18px;
+        }
+
+        .footer-links-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-links-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-links-list a {
+            font-size: 13px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s ease, padding-left 0.2s ease;
+            outline: none;
+        }
+
+        .footer-links-list a:hover {
+            color: #38bdf8;
+            padding-left: 2px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(30, 41, 59, 0.6);
+            padding-top: 20px;
+            margin-top: 32px;
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        /* --- EMOJI UNIK DENGAN HTML/CSS --- */
+        .unique-emoji-browser {
+            width: 14px;
+            height: 12px;
+            border: 1.5px solid #ffffff;
+            border-radius: 2px;
+            position: relative;
+            display: inline-block;
+        }
+        .unique-emoji-browser::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #ffffff;
+        }
+        .unique-emoji-browser::after {
+            content: '';
+            position: absolute;
+            top: 0.5px;
+            left: 2px;
+            width: 1.5px;
+            height: 1.5px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 2.5px 0 0 #ffffff, 5px 0 0 #ffffff;
+        }
+
+        .unique-emoji-handshake {
+            width: 15px;
+            height: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        .unique-emoji-handshake::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 5px;
+            border: 1.5px solid #ffffff;
+            border-radius: 2px;
+            transform: rotate(-25deg);
+            left: 1px;
+            top: 2px;
+        }
+        .unique-emoji-handshake::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 5px;
+            border: 1.5px solid #ffffff;
+            border-radius: 2px;
+            transform: rotate(25deg);
+            right: 1px;
+            top: 2px;
+        }
+
+        .unique-emoji-message {
+            width: 14px;
+            height: 11px;
+            background-color: #ffffff;
+            border-radius: 3px;
+            position: relative;
+            display: inline-block;
+        }
+        .unique-emoji-message::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 3px;
+            width: 0;
+            height: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-top: 4px solid #ffffff;
+        }
+        .unique-emoji-message::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 2.5px;
+            width: 9px;
+            height: 1px;
+            background-color: #2563eb;
+            box-shadow: 0 2.5px 0 #2563eb;
+        }
+
+        .unique-emoji-user {
+            width: 8px;
+            height: 8px;
+            border: 1.5px solid #38bdf8;
+            border-radius: 50%;
+            position: relative;
+            margin-top: -4px;
+        }
+        .unique-emoji-user::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 6px;
+            border-left: 1.5px solid #38bdf8;
+            border-right: 1.5px solid #38bdf8;
+            border-top: 1.5px solid #38bdf8;
+            border-radius: 4px 4px 0 0;
+            bottom: -8px;
+            left: -4.5px;
+        }
+
+        .unique-emoji-console {
+            width: 20px;
+            height: 16px;
+            background-color: #38bdf8;
+            border-radius: 4px;
+            position: relative;
+        }
+        .unique-emoji-console::before {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #0b1120;
+            border-radius: 50%;
+            top: 50%;
+            left: 3px;
+            transform: translateY(-50%);
+        }
+        .unique-emoji-console::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #0b1120;
+            border-radius: 50%;
+            top: 50%;
+            right: 3px;
+            transform: translateY(-50%);
+        }
+
+        .unique-emoji-energy {
+            width: 12px;
+            height: 20px;
+            background-color: #38bdf8;
+            clip-path: polygon(0 45%, 100% 0, 40% 55%, 100% 100%, 0 55%);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="circle circle-large"></div>
+        <div class="circle circle-medium"></div>
+        <div class="circle circle-small"></div>
+    </div>
+
+    <div class="container">
+        
+        <div class="hero-card">
+            <div class="badge-premium">
+                <div class="badge-icon"></div> Premium Game Marketplace
+            </div>
+            <h1 class="hero-title">Akun game premium, top up all game.</h1>
+            <p class="hero-desc">Stock Free Fire, Mobile Legends, top up game, dan layanan partner dalam satu pengalaman web yang cepat dari mobile.</p>
+        </div>
+
+
+        <div class="top-menu-row">
+            <a href="GANTI_LINK_BELI_AKUN" class="katalog-link" target="_blank">
+                <div class="btn-top-menu">
+                    <div class="unique-emoji-browser"></div> Beli Akun
+                </div>
+            </a>
+            <a href="https://www.codashop.com" class="katalog-link" target="_blank">
+                <div class="btn-top-menu">
+                    <div class="unique-emoji-browser"></div> Top Up All Game
+                </div>
+            </a>
+        </div>
+
+        <div class="btn-full-menu">
+            <div class="unique-emoji-handshake"></div> Daftar Partner/Paid Promote Disini
+        </div>
+
+        <div class="partner-large-catalog">
+            <a href="https://wa.me/message/QB5MGALKFFVUB1" class="katalog-link" target="_blank">
+                <div class="partner-card-row">
+                    <div class="partner-left">
+                        <div class="partner-avatar-initial">AC</div>
+                        <div class="partner-info">
+                            <span class="partner-name">PT ACELIS</span>
+                            <span class="partner-desc-text">Partner resmi penyedia promosi premium</span>
+                        </div>
+                    </div>
+                    <span class="action-arrow">➔</span>
+                </div>
+            </a>
+
+            <a href="https://wa.me/message/VDJKDLRG3CZWC1" class="katalog-link" target="_blank">
+                <div class="partner-card-row">
+                    <div class="partner-left">
+                        <div class="partner-avatar-initial">DA</div>
+                        <div class="partner-info">
+                            <span class="partner-name">PT DAFFA</span>
+                            <span class="partner-desc-text">Partner terpercaya promosi & media branding</span>
+                        </div>
+                    </div>
+                    <span class="action-arrow">➔</span>
+                </div>
+            </a>
+        </div>
+
+        <a href="https://whatsapp.com/channel/0029Vb7vcrz1XquTXFnKdX2F" class="katalog-link" target="_blank">
+            <div class="btn-pink-to-blue">
+                <div class="unique-emoji-message"></div> Testimoni Pembelian
+            </div>
+        </a>
+
+
+        <div class="section-divider">Hubungi Admin</div>
+        
+        <div class="admin-group-container">
+            
+            <a href="https://whatsapp.com/channel/0029VbBTzRlFcowA66xcOQ0X" class="katalog-link" target="_blank">
+                <div class="admin-row">
+                    <div class="admin-left">
+                        <div class="admin-avatar-wrapper">
+                            <div class="unique-emoji-user"></div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-name">SALURAN WHATSAPP</span>
+                            <span class="admin-detail">Untuk info stock akun dan update terhangat</span>
+                        </div>
+                    </div>
+                    <div class="admin-right">
+                        <div class="status-badge"><div class="status-dot"></div> online</div>
+                        <span class="action-arrow">↗</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://whatsapp.com/channel/0029Vb7qnsd9cDDhjmBsTJ3p" class="katalog-link" target="_blank">
+                <div class="admin-row">
+                    <div class="admin-left">
+                        <div class="admin-avatar-wrapper">
+                            <div class="unique-emoji-user"></div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-name">SALURAN RENTAL</span>
+                            <span class="admin-detail">Informasi sewa akun game terpercaya</span>
+                        </div>
+                    </div>
+                    <div class="admin-right">
+                        <div class="status-badge"><div class="status-dot"></div> online</div>
+                        <span class="action-arrow">↗</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://wa.me/message/QB5MGALKFFVUB1" class="katalog-link" target="_blank">
+                <div class="admin-row">
+                    <div class="admin-left">
+                        <div class="admin-avatar-wrapper">
+                            <div class="unique-emoji-user"></div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-name">ADMIN UTAMA</span>
+                            <span class="admin-detail">Fast respond dan melayani 24 jam penuh</span>
+                        </div>
+                    </div>
+                    <div class="admin-right">
+                        <div class="status-badge"><div class="status-dot"></div> online</div>
+                        <span class="action-arrow">↗</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://wa.me/message/VDJKDLRG3CZWC1" class="katalog-link" target="_blank">
+                <div class="admin-row">
+                    <div class="admin-left">
+                        <div class="admin-avatar-wrapper">
+                            <div class="unique-emoji-user"></div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-name">ADMIN KEDUA</span>
+                            <span class="admin-detail">Asisten fast respond siap membantu kebutuhan Anda</span>
+                        </div>
+                    </div>
+                    <div class="admin-right">
+                        <div class="status-badge"><div class="status-dot"></div> online</div>
+                        <span class="action-arrow">↗</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://wa.me/qr/DQVK72K2KFYGI1" class="katalog-link" target="_blank">
+                <div class="admin-row">
+                    <div class="admin-left">
+                        <div class="admin-avatar-wrapper">
+                            <div class="unique-emoji-user"></div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-name">ADMIN JUAL AKUN</span>
+                            <span class="admin-detail">Khusus melayani penjualan akun game Anda</span>
+                        </div>
+                    </div>
+                    <div class="admin-right">
+                        <div class="status-badge"><div class="status-dot"></div> online</div>
+                        <span class="action-arrow">↗</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://wa.me/message/VDJKDLRG3CZWC1" class="katalog-link" target="_blank">
+                <div class="admin-row">
+                    <div class="admin-left">
+                        <div class="admin-avatar-wrapper">
+                            <div class="unique-emoji-user"></div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-name">CARIKAN AKUN 20K-500K</span>
+                            <span class="admin-detail">Membantu mencari akun game budget pelajar</span>
+                        </div>
+                    </div>
+                    <div class="admin-right">
+                        <div class="status-badge"><div class="status-dot"></div> online</div>
+                        <span class="action-arrow">↗</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://wa.me/message/QB5MGALKFFVUB1" class="katalog-link" target="_blank">
+                <div class="admin-row">
+                    <div class="admin-left">
+                        <div class="admin-avatar-wrapper">
+                            <div class="unique-emoji-user"></div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-name">CARIKAN AKUN 501K-1JT++</span>
+                            <span class="admin-detail">Membantu mencari akun game spesifikasi sultan</span>
+                        </div>
+                    </div>
+                    <div class="admin-right">
+                        <div class="status-badge"><div class="status-dot"></div> online</div>
+                        <span class="action-arrow">↗</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://wa.me/message/QB5MGALKFFVUB1" class="katalog-link" target="_blank">
+                <div class="admin-row">
+                    <div class="admin-left">
+                        <div class="admin-avatar-wrapper">
+                            <div class="unique-emoji-user"></div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-name">ADMIN REKBER SAMA MIDMAN</span>
+                            <span class="admin-detail">Penengah transaksi aman antara buyer & seller</span>
+                        </div>
+                    </div>
+                    <div class="admin-right">
+                        <div class="status-badge"><div class="status-dot"></div> online</div>
+                        <span class="action-arrow">↗</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://wa.me/message/QB5MGALKFFVUB1" class="katalog-link" target="_blank">
+                <div class="admin-row">
+                    <div class="admin-left">
+                        <div class="admin-avatar-wrapper">
+                            <div class="unique-emoji-user"></div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-name">ADMIN JOIN PP/PT</span>
+                            <span class="admin-detail">Pendaftaran paid promote & partner resmi</span>
+                        </div>
+                    </div>
+                    <div class="admin-right">
+                        <div class="status-badge"><div class="status-dot"></div> online</div>
+                        <span class="action-arrow">↗</span>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+
+
+        <main class="katalog-grid">
+            
+            <a href="GANTI_DENGAN_LINK_PRODUK_ANDA" class="katalog-link" target="_blank">
+                <div class="katalog-card">
+                    <div>
+                        <div class="card-icon-wrapper icon-blue-dark">
+                            <div class="unique-emoji-console"></div>
+                        </div>
+                        <h2 class="card-title">Katalog Produk</h2>
+                        <p class="card-desc">Cek stock akun Free Fire, Mobile Legends, top up game dan lainnya secara...</p>
+                    </div>
+                    <div class="card-action-link">
+                        Lihat Katalog ➔
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://www.codashop.com" class="katalog-link" target="_blank">
+                <div class="katalog-card">
+                    <div>
+                        <div class="card-icon-wrapper icon-blue-dark">
+                            <div class="unique-emoji-energy"></div>
+                        </div>
+                        <h2 class="card-title">Top Up All Game</h2>
+                        <p class="card-desc">Layanan top up tercepat dan termurah untuk semua game favoritmu.</p>
+                    </div>
+                    <div class="card-action-link">
+                        Top Up Sekarang ➔
+                    </div>
+                </div>
+            </a>
+
+        </main>
+
+
+        <footer class="custom-footer">
+            <div class="footer-content">
+                <div class="footer-brand-section">
+                    <div class="footer-logo">Acelis <span>Market</span></div>
+                    <p class="footer-desc">Premium game marketplace terpercaya. Tempat terbaik untuk rental akun, stock akun Free Fire & Mobile Legends, dan layanan game lainnya.</p>
+                </div>
+
+                <div class="footer-links-group">
+                    <h4 class="footer-links-title">Navigasi</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Tentang Perusahaan</a></li>
+                        <li><a href="#">Katalog Produk</a></li>
+                        <li><a href="#">Layanan Kami</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Kontak</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-group">
+                    <h4 class="footer-links-title">Sosial Media</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="https://www.instagram.com/acelismarket.id?igsh=MXJ3bzNkTWhucnVjYw==" target="_blank">Instagram</a></li>
+                        <li><a href="https://www.tiktok.com/@acelismarket.official" target="_blank">TikTok</a></li>
+                        <li><a href="https://whatsapp.com/channel/0029VbBTzRlFcowA66xcOQ0X" target="_blank">Saluran WhatsApp</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 Acelis Market. All rights reserved.</p>
+                <p>Premium game marketplace for mobile-first users.</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loading-screen');
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 1500); // Tampil selama 1.5 detik setiap kali website dibuka
+        });
+    </script>
+
+</body>
+</html>
