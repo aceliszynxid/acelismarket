@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ACELIS MARKET - JUAL BELI AKUN NOMOR 1 DI INDONESIA</title>
+    <link rel="icon" href="URL_GAMBAR_YANG_KAMU_KIRIM" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary-blue: #3b82f6;
+            --dark-navy: #0F172A;
+            --accent-blue: #60a5fa;
+            --gold-tier: #FFD700;
+            --animate-delay: 0.1s;
+            --animate-duration: 0.5s;
+        }
+
+        @keyframes fadeInUpCustom {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 20px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        .animate-near {
+            animation: fadeInUpCustom 0.5s ease backwards;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #050a14; 
+            color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .card-shadow { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .bottom-nav-item.active { color: #ffffff; font-weight: 800; pointer-events: none; }
+        
+        .page-content { display: none; }
+        .page-active { display: block; }
+
+        .nav-container {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            z-index: 9000;
+        }
+
+        .bottom-nav {
+            background-color: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 20px;
+            border-radius: 50px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-chip {
+            padding: 6px 16px;
+            border-radius: 9999px; 
+            background: #1e293b;
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            transition: 0.2s;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .filter-chip.active {
+            background: rgba(59, 130, 246, 0.2); 
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            pointer-events: none; 
+        }
+
+        .card-prof {
+            background-color: #0F172A;
+            border: 0.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .is-sold .img-grayscale {
+            filter: grayscale(1);
+            opacity: 0.4;
+        }
+
+        .sold-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+        }
+
+        .sold-badge {
+            background: transparent; 
+            color: #ffffff;
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+            border: 0.5px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* Khusus untuk di dalam modal katalog produk terjual */
+        #detailModal .sold-badge {
+            font-size: 18px;
+            padding: 8px 20px;
+            letter-spacing: 1px;
+            border: 0.5px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .img-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 1rem 1rem 0 0;
+        }
+        .img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 800;
+            color: #ffffff;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0F172A; 
+            z-index: 2000;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        #modalImages {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .modal-img-wrapper {
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .modal-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.7);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            cursor: pointer;
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        .prev-btn { left: 10px; }
+        .next-btn { right: 10px; }
+        .nav-btn.disabled { opacity: 0.2; cursor: not-allowed; }
+
+        .breadcrumb {
+            font-size: 11px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 0;
+        }
+        .breadcrumb span { cursor: pointer; transition: 0.2s; }
+        .breadcrumb span:hover { color: #3b82f6; }
+        
+        #page-history .breadcrumb span.active {
+            color: #94a3b8;
+            pointer-events: none;
+            cursor: default;
+        }
+        
+        .breadcrumb span.active:hover { color: #94a3b8; }
+
+        #app-loader {
+            position: fixed;
+            inset: 0;
+            background-color: #050a14;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: all;
+        }
+        
+        .loader-dots {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dot {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            border-radius: 50%;
+            animation: bounceDot 0.6s cubic-bezier(0.6, 0.1, 0.4, 0.9) infinite alternate;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .dot-big { width: 20px; height: 20px; animation-delay: 0s; }
+        .dot-medium { width: 14px; height: 14px; animation-delay: 0.15s; }
+        .dot-small { width: 8px; height: 8px; animation-delay: 0.3s; }
+
+        @keyframes bounceDot {
+            from { transform: translateY(0); opacity: 0.5; }
+            to { transform: translateY(-16px); opacity: 1; }
+        }
+
+        .loader-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 24px;
+            animation: pulseText 1.5s ease-in-out infinite;
+        }
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; text-shadow: 0 0 8px rgba(59, 130, 246, 0.4); }
+        }
+
+        #detail-loader {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(5, 10, 20, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.4s ease;
+        }
+
+        .loader-detail-card {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            padding: 16px 24px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transform: scale(0.95);
+            animation: cardPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes cardPopIn {
+            to { transform: scale(1); }
+        }
+
+        .spinner-mini {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(59, 130, 246, 0.15);
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spinMini 0.75s linear infinite;
+        }
+
+        @keyframes spinMini {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #customFilterModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(5, 10, 20, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 4000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .filter-modal-card {
+            background-color: #0F172A;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 450px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .filter-select-btn {
+            background-color: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s;
+            text-align: center;
+            cursor: pointer;
+        }
+        .filter-select-btn.active {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        
+        .html-filter-icon {
+            display: inline-flex;
+            width: 15px;
+            height: 15px;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+        }
+        .html-filter-icon::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            width: 14px;
+            height: 2px;
+            background-color: currentColor;
+            border-radius: 2px;
+        }
+        .html-filter-icon::after {
+            content: "";
+            position: absolute;
+            top: 6.5px;
+            width: 9px;
+            height: 2px;
+            background-color: currentColor;
+            border-radius: 2px;
+        }
+        .html-filter-icon .line-three {
+            position: absolute;
+            top: 11px;
+            width: 4px;
+            height: 2px;
+            background-color: currentColor;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="pb-32" style="overflow: hidden; height: 100vh;">
+
+    <div id="app-loader">
+        <div class="loader-dots">
+            <div class="dot dot-big"></div>
+            <div class="dot dot-medium"></div>
+            <div class="dot dot-small"></div>
+        </div>
+        <div class="loader-text">Memuat...</div>
+    </div>
+
+    <div id="imageZoomModal" style="display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.95); z-index: 99999; align-items: center; justify-content: center; flex-direction: column; overscroll-behavior: contain; touch-action: none;">
+        <button onclick="closeZoomModal()" style="position: absolute; top: 20px; right: 20px; background: rgba(30, 41, 59, 0.8); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100000; border: 1px solid rgba(255,255,255,0.2); transition: transform 0.2s; pointer-events: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 10px; pointer-events: none;">
+            <img id="zoomedImage" src="" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; touch-action: none; pointer-events: auto;">
+        </div>
+    </div>
+
+    <div id="detail-loader" style="display: none; opacity: 0; visibility: hidden;">
+        <div class="loader-detail-card">
+            <div class="spinner-mini"></div>
+            <div class="loader-detail-text">Memuat detail akun...</div>
+        </div>
+    </div>
+
+    <!-- Modal Pilihan Game -->
+    <div id="gameSelectionModal" style="display: none;" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[5000] items-center justify-center p-4 animate__animated animate__fadeIn animate__fast">
+        <div class="bg-[#0F172A] border border-slate-800/80 rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl animate__animated animate__zoomIn animate__fast">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-base text-white flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></polygon></svg>
+                    Pilih Kategori Game
+                </h3>
+                <button onclick="closeGameSelectionModal()" class="text-slate-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 gap-3 pt-2">
+                <button onclick="selectGameCategory('Free Fire')" class="w-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 p-4 rounded-xl flex items-center justify-between group transition-all duration-200 text-left">
+                    <div class="flex items-center gap-3">
+                        <div id="logo-ff-container" class="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center text-orange-500 font-black text-xs">FF</div>
+                        <div>
+                            <h4 class="font-bold text-sm text-white">Free Fire</h4>
+                            <p class="text-[10px] text-slate-500">Katalog akun sultan Free Fire</p>
+                        </div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-500 group-hover:text-blue-400 transition-colors"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                
+                <button onclick="selectGameCategory('Mobile Legends')" class="w-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 p-4 rounded-xl flex items-center justify-between group transition-all duration-200 text-left">
+                    <div class="flex items-center gap-3">
+                        <div id="logo-ml-container" class="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-black text-xs">ML</div>
+                        <div>
+                            <h4 class="font-bold text-sm text-white">MLBB</h4>
+                            <p class="text-[10px] text-slate-500">Katalog akun sultan Mobile Legends</p>
+                        </div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-500 group-hover:text-blue-400 transition-colors"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customFilterModal" class="animate__animated animate__fadeIn animate__fast">
+        <div class="filter-modal-card p-5 animate__animated animate__zoomIn animate__fast">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                <div class="flex items-center gap-2 text-blue-500">
+                    <div class="html-filter-icon"><span class="line-three"></span></div>
+                    <h2 class="text-sm font-bold text-white">Filter & Urutan</h2>
+                </div>
+                <button onclick="closeCustomFilterModal()" class="text-slate-400 hover:text-white p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="overflow-y-auto hide-scrollbar space-y-4 flex-1 pr-1">
+                <div>
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Urutan</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setSortOption('terpopuler')" id="opt-sort-terpopuler" class="filter-select-btn active">Terpopuler</button>
+                        <button onclick="setSortOption('terbaru')" id="opt-sort-terbaru" class="filter-select-btn">Terbaru</button>
+                        <button onclick="setSortOption('murah')" id="opt-sort-murah" class="filter-select-btn">Harga Termurah</button>
+                        <button onclick="setSortOption('mahal')" id="opt-sort-mahal" class="filter-select-btn">Harga Termahal</button>
+                        <button onclick="setSortOption('az')" id="opt-sort-az" class="filter-select-btn">Nama A-Z</button>
+                        <button onclick="setSortOption('za')" id="opt-sort-za" class="filter-select-btn">Nama Z-A</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tier Kategori</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setTierOption('Semua')" id="opt-tier-Semua" class="filter-select-btn active">Semua</button>
+                        <button onclick="setTierOption('pelajar')" id="opt-tier-pelajar" class="filter-select-btn">Pelajar</button>
+                        <button onclick="setTierOption('reguler')" id="opt-tier-reguler" class="filter-select-btn">Reguler</button>
+                        <button onclick="setTierOption('premium')" id="opt-tier-premium" class="filter-select-btn">Premium</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Status Kategori</h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setStatusOption('semua')" id="opt-status-semua" class="filter-select-btn active">Semua</button>
+                        <button onclick="setStatusOption('terjual')" id="opt-status-terjual" class="filter-select-btn">Terjual</button>
+                        <button onclick="setStatusOption('tersedia')" id="opt-status-tersedia" class="filter-select-btn">Tersedia</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3 mt-4 flex gap-2">
+                <button onclick="resetCustomFilters()" class="w-1/3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold py-2.5 rounded-xl transition-all">Reset</button>
+                <button onclick="applyCustomFilters()" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-blue-900/20">Terapkan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-home" class="page-content">
+        <div class="mt-7 px-5 mb-3" id="banner-tamu-wrapper">
+            <div id="banner-tamu-slider" class="relative w-full h-40 sm:h-56 rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900 to-slate-900 border border-slate-800 flex items-center justify-between">
+                <div class="relative z-10 flex-1 py-1 pl-6">
+                    <div class="inline-flex items-center gap-1.5 border border-blue-400/50 bg-blue-500/10 rounded-full px-3 py-1 mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-blue-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        <span class="text-[9px] font-bold text-blue-400 tracking-wider">Store Gaming Acelis</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold leading-tight break-words">Jual & <span class="text-blue-200">Beli Akun Sultan</span></h2>
+                    <p class="text-xs sm:text-sm text-blue-100 mt-1 opacity-80 break-words">Pusat akun gaming nomor 1 di Indonesia</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-5 space-y-2.5">
+            <div class="relative mt-5 mb-5">
+                <span class="absolute inset-y-0 left-4 flex items-center text-slate-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </span>
+                <input type="text" id="searchInput" onkeypress="handleSearchEnter(event)" placeholder="Cari nama atau game..." class="w-full bg-slate-900 border border-slate-800 rounded-2xl py-3.5 pl-12 pr-4 text-sm outline-none focus:border-blue-500 transition-all">
+            </div>
+
+            <a href="https://www.codashop.com" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between block">
+                <div class="flex flex-col">
+                    <span class="bg-red-600 text-[8px] font-black px-1.5 py-0.5 rounded w-fit mb-0.5 italic text-white">HOT</span>
+                    <span class="font-bold text-sm">Top Up All Game</span>
+                </div>
+                <div class="w-9 h-9 bg-red-900/30 rounded-xl flex items-center justify-center text-red-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3 8 9l3 4 3-4-3-6zm3 6 4-6M6 3l4 6"/></svg>
+                </div>
+            </a>
+
+            <div class="grid grid-cols-2 gap-2.5">
+                <a href="https://whatsapp.com/channel/0029VbBTzRlFcowA66xcOQ0X" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between">
+                    <span class="font-bold text-xs">Saluran WA</span>
+                    <div class="w-8 h-8 bg-yellow-900/30 rounded-xl flex items-center justify-center text-yellow-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                </a>
+                <a href="https://wa.me/6285707356154" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between">
+                    <span class="font-bold text-xs">Nomor resmi</span>
+                    <div class="w-8 h-8 bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3.5z"/></svg>
+                    </div>
+                </a>
+                <div onclick="closeModal(); openGameSelectionModal()" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between cursor-pointer">
+                    <span class="font-bold text-xs">Stok Akun</span>
+                    <div class="w-8 h-8 bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                    </div>
+                </div>
+                <a href="https://wa.me/6285707356154" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between">
+                    <span class="font-bold text-xs">RekBer</span>
+                    <div class="w-8 h-8 bg-slate-800 rounded-xl flex items-center justify-center text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                    </div>
+                </a>
+            </div>
+
+            <a href="https://wa.me/6285707356154" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between block">
+                <span class="font-bold text-sm">Jual akun</span>
+                <div class="w-9 h-9 bg-green-900/30 rounded-xl flex items-center justify-center text-green-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="17" cy="12" r="1"/><circle cx="15" cy="10" r="1"/><path d="M6 12h4"/><path d="M8 10v4"/></svg>
+                </div>
+            </a>
+
+            <div onclick="closeModal(); openGameSelectionModal()" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between cursor-pointer hover:border-slate-700 transition-all">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-5 h-5 flex items-center justify-center text-orange-500 flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-sm text-white">Produk Terbaru</span>
+                </div>
+                <div class="flex items-center gap-1 text-slate-400 flex-shrink-0">
+                    <span class="text-xs font-semibold">Lihat</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </div>
+            </div>
+
+            <div id="container-produk-terbaru" class="grid grid-cols-2 gap-4 pt-1"></div>
+
+            <div class="pt-8 pb-4 text-center border-t border-slate-900">
+                <p class="text-[11px] font-bold text-slate-500 mb-1">© 2026 Acelis Market. All rights reserved.</p>
+                <p class="text-[10px] text-slate-600 font-medium">Premium game marketplace for mobile-first users.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-history" class="page-content page-active pt-10 px-5">
+        
+        <div id="skeleton-history" class="animate-pulse w-full block">
+            <div class="w-32 h-3 bg-slate-800 rounded mb-4 mt-2"></div>
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex flex-col gap-2">
+                    <div class="w-48 h-8 bg-slate-800 rounded"></div>
+                    <div class="w-16 h-3 bg-slate-800 rounded"></div>
+                </div>
+                <div class="w-28 h-8 bg-slate-800 rounded-lg"></div>
+            </div>
+            <div class="flex gap-2 mb-6">
+                <div class="w-16 h-8 bg-slate-800 rounded-full"></div>
+                <div class="w-20 h-8 bg-slate-800 rounded-full"></div>
+                <div class="w-24 h-8 bg-slate-800 rounded-full"></div>
+                <div class="w-20 h-8 bg-slate-800 rounded-full"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="w-full h-[220px] bg-slate-800 rounded-2xl"></div>
+                <div class="w-full h-[220px] bg-slate-800 rounded-2xl"></div>
+                <div class="w-full h-[220px] bg-slate-800 rounded-2xl"></div>
+                <div class="w-full h-[220px] bg-slate-800 rounded-2xl"></div>
+            </div>
+        </div>
+
+        <div id="actual-history-content" class="hidden">
+            <div class="mb-2">
+                <div class="breadcrumb mb-1">
+                    <span onclick="closeModal(); switchPage('page-home')">Home</span>
+                    <span class="mx-1">/</span>
+                    <span class="active">Katalog</span>
+                </div>
+                <div class="flex items-center justify-between relative">
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <div class="text-blue-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                            </div>
+                            <h1 id="katalog-title" class="text-2xl font-extrabold">Katalog</h1>
+                        </div>
+                        <p id="total-katalog" class="text-xs text-slate-500">0 produk</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 mb-3 py-1">
+                <div id="chip-container" class="flex gap-2 overflow-x-auto hide-scrollbar flex-1">
+                    <button id="chip-semua" onclick="applySort('Semua')" class="filter-chip active whitespace-nowrap">Semua</button>
+                </div>
+                <button onclick="openCustomFilterModal()" class="bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all active:scale-95 whitespace-nowrap flex-shrink-0">
+                    <div class="html-filter-icon text-blue-500"><span class="line-three"></span></div>
+                    Filter & Urutan
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4" id="container-katalog"></div>
+            
+            <div id="container-load-more" class="flex flex-col items-center mt-6 mb-8 hidden">
+                <button onclick="showAllKatalogItems()" class="bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 text-xs font-bold py-3 px-6 rounded-2xl flex items-center gap-2 transition-all active:scale-95">
+                    Lihat Lebih Banyak
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <span id="text-remaining-items" class="text-[10px] text-slate-500 font-medium mt-2"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="detailModal" class="modal">
+        <div class="p-5">
+            <div id="modalNavigation" class="flex justify-between items-center mb-6">
+                <div id="breadcrumb" class="breadcrumb">
+                    <span onclick="closeModal(); switchPage('page-home')">Home</span>
+                    <span class="mx-1">/</span>
+                    <span onclick="closeModal()">Katalog</span>
+                    <span class="mx-1">/</span>
+                    <span id="breadNama" class="active" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;">Produk</span>
+                </div>
+                <button id="btnShare" class="bg-blue-600 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 text-white shadow-lg shadow-blue-900/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.41" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    Bagikan
+                </button>
+            </div>
+            
+            <div class="relative w-full bg-slate-900 rounded-3xl overflow-hidden mb-6 border border-slate-800 shadow-2xl">
+                <div id="modalImages"></div>
+                <div id="btnPrev" onclick="prevImage()" class="nav-btn prev-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m15 18-6-6 6-6"/></svg>
+                </div>
+                <div id="btnNext" onclick="nextImage()" class="nav-btn next-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
+            </div>
+
+            <div id="modalBody" class="space-y-4"></div>
+            
+            <div id="modalRekomendasiSection" class="mt-8 border-t border-slate-800/60 pt-6">
+                <h4 class="text-sm font-extrabold text-white mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-3.5 bg-blue-500 rounded-full inline-block"></span>
+                    Rekomendasi Produk
+                </h4>
+                <div id="container-rekomendasi-modal" class="grid grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-container">
+        <nav class="bottom-nav card-shadow">
+            <div onclick="closeModal(); switchPage('page-home')" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 cursor-pointer" id="nav-home">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <span class="text-[9px]">Beranda</span>
+            </div>
+            <div onclick="closeModal(); openGameSelectionModal()" class="bottom-nav-item active flex flex-col items-center gap-1 cursor-pointer" id="nav-history">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                <span class="text-[9px]">Produk</span>
+            </div>
+            <a href="https://www.codashop.com" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3 8 9l3 4 3-4-3-6zm3 6 4-6M6 3l4 6"/></svg>
+                <span class="text-[9px]">Top Up</span>
+            </a>
+            <a href="https://wa.me/6285707356154" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="17" cy="12" r="1"/><circle cx="15" cy="10" r="1"/><path d="M6 12h4"/><path d="M8 10v4"/></svg>
+                <span class="text-[9px]">Jual Akun</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAj3hchLMj0sDFaMoFDfZs_y5tRpRDBKIk",
+            authDomain: "acelismarket.firebaseapp.com",
+            databaseURL: "https://acelismarket-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "acelismarket",
+            storageBucket: "acelismarket.firebasestorage.app",
+            messagingSenderId: "720209985800",
+            appId: "1:720209985800:web:a8e86ff8900551a3aa6cbd"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+
+        let isFirebaseLoaded = false;
+        let produkData = [];
+        let currentImgIndex = 0;
+        let activeImagesCount = 0;
+        let currentOpenProductKey = null;
+        let initialUrlIdChecked = false;
+        
+        let likedProducts = JSON.parse(localStorage.getItem('likedProductsAcelis')) || {};
+        
+        let currentFilteredData = [];
+        let isLimitActive = true;
+
+        let listBannerTamu = [];
+        let namaPenjualGlobal = "AC ACELIS";
+        let fotoProfilAdminGlobal = "";
+        let indexBannerAktif = 0;
+        let intervalSliderBanner = null;
+
+        let activeSort = 'terpopuler';
+        let activeTier = 'Semua';
+        let activeStatus = 'semua';
+        
+        window.selectedGameContext = null;
+
+        function loadData() {
+            const dbRef = firebase.database().ref('produkAcelis');
+            const setupRef = firebase.database().ref('setupTokoAcelis');
+
+            setupRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if(data) {
+                    if(data.banners && data.banners.length > 0) {
+                        listBannerTamu = data.banners;
+                        mulaiAnimasiSliderBannerTamu();
+                    }
+                    if(data.namaPenjual) namaPenjualGlobal = data.namaPenjual;
+                    if(data.profilPenjual) fotoProfilAdminGlobal = data.profilPenjual;
+
+                    const logoFF = document.getElementById('logo-ff-container');
+                    if (logoFF) {
+                        if (data.profilFF) {
+                            logoFF.innerHTML = `<img src="${data.profilFF}" class="w-full h-full object-cover rounded-lg">`;
+                            logoFF.className = 'w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center';
+                        } else {
+                            logoFF.innerHTML = 'FF';
+                            logoFF.className = 'w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center text-orange-500 font-black text-xs';
+                        }
+                    }
+                    const logoML = document.getElementById('logo-ml-container');
+                    if (logoML) {
+                        if (data.profilML) {
+                            logoML.innerHTML = `<img src="${data.profilML}" class="w-full h-full object-cover rounded-lg">`;
+                            logoML.className = 'w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center';
+                        } else {
+                            logoML.innerHTML = 'ML';
+                            logoML.className = 'w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-black text-xs';
+                        }
+                    }
+                }
+                isFirebaseLoaded = true;
+                refreshUI();
+            });
+            
+            dbRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                produkData = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        produkData.push({ firebaseKey: key, ...data[key] });
+                    });
+                }
+                localStorage.setItem('produkAcelis', JSON.stringify(produkData));
+                
+                isFirebaseLoaded = true;
+                refreshUI();
+            }, (error) => {
+                console.error("Firebase Sync Error: ", error);
+                const localData = localStorage.getItem('produkAcelis');
+                if(localData) {
+                    produkData = JSON.parse(localData);
+                    isFirebaseLoaded = true;
+                    refreshUI();
+                }
+            });
+        }
+
+        function mulaiAnimasiSliderBannerTamu() {
+            clearInterval(intervalSliderBanner);
+            const sliderEl = document.getElementById('banner-tamu-slider');
+            if(!sliderEl || listBannerTamu.length === 0) return;
+            
+            indexBannerAktif = 0;
+            const renderSlide = () => {
+                sliderEl.innerHTML = `
+                    <img src="${listBannerTamu[0]}" loading="lazy" class="w-full h-full object-cover absolute inset-0">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent z-10 pointer-events-none"></div>
+                    <div class="relative z-20 flex-1 py-1 pl-6">
+                        <div class="inline-flex items-center gap-1.5 border border-blue-400/50 bg-blue-500/10 rounded-full px-3 py-1 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-blue-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                            <span class="text-[9px] font-bold text-blue-400 tracking-wider">Store Gaming Acelis</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold leading-tight break-words text-white drop-shadow-md">Jual & <span class="text-blue-300">Beli Akun Sultan</span></h2>
+                        <p class="text-xs sm:text-sm text-slate-200 mt-1 opacity-90 break-words drop-shadow-sm">Pusat akun gaming nomor 1 di Indonesia</p>
+                    </div>
+                `;
+            };
+            
+            renderSlide();
+        }
+        
+        function checkDeepLink() {
+            if (!initialUrlIdChecked && produkData.length > 0) {
+                initialUrlIdChecked = true;
+                const urlParams = new URLSearchParams(window.location.search);
+                let productId = urlParams.get('id');
+                if (!productId) {
+                    productId = sessionStorage.getItem('activeProductKey');
+                }
+                if (productId) {
+                    const targetIndex = produkData.findIndex(p => p.firebaseKey === productId);
+                    if (targetIndex !== -1) {
+                        const targetProd = produkData[targetIndex];
+                        if (targetProd && targetProd.kategori) {
+                            if (targetProd.kategori.toLowerCase().includes('free fire')) window.selectedGameContext = 'Free Fire';
+                            if (targetProd.kategori.toLowerCase().includes('mobile legends')) window.selectedGameContext = 'Mobile Legends';
+                        }
+                        openDetail(targetIndex);
+                    } else {
+                        const detailLoader = document.getElementById('detail-loader');
+                        if (detailLoader) {
+                            detailLoader.style.opacity = '0';
+                            detailLoader.style.visibility = 'hidden';
+                            setTimeout(() => { detailLoader.style.display = 'none'; }, 400);
+                        }
+                    }
+                }
+            }
+        }
+
+        function refreshUI() {
+            renderProdukTerbaru();
+            
+            if (window.selectedGameContext) {
+                applyGameFilterRealtime(window.selectedGameContext);
+            } else {
+                renderKatalog();
+            }
+
+            if (isFirebaseLoaded) {
+                const skeletonHistory = document.getElementById('skeleton-history');
+                const actualHistory = document.getElementById('actual-history-content');
+                if (skeletonHistory && skeletonHistory.classList.contains('block')) {
+                    skeletonHistory.classList.replace('block', 'hidden');
+                    actualHistory.classList.replace('hidden', 'block');
+                    
+                    triggerFadeUpAnimation('container-katalog');
+                }
+
+                if (currentOpenProductKey && document.getElementById('detailModal').style.display === 'block') {
+                    const updatedProduct = produkData.find(p => p.firebaseKey === currentOpenProductKey);
+                    if (updatedProduct) {
+                        const viewEl = document.getElementById('detail-view-counter');
+                        const likeEl = document.getElementById('detail-like-counter');
+                        if (viewEl) viewEl.innerText = updatedProduct.views || 0;
+                        if (likeEl) likeEl.innerText = updatedProduct.likes || 0;
+                    }
+                }
+
+                if (produkData.length > 0) {
+                    const loader = document.getElementById('app-loader');
+                    if (loader) {
+                        loader.style.opacity = '0';
+                        loader.style.visibility = 'hidden';
+                        setTimeout(() => { 
+                            loader.style.display = 'none'; 
+                            if(document.getElementById('detailModal').style.display !== 'block') {
+                                document.body.style.overflow = 'auto';
+                                document.body.style.height = 'auto';
+                            }
+                        }, 500);
+                    }
+                } else {
+                    const loader = document.getElementById('app-loader');
+                    if (loader) {
+                        loader.style.display = 'flex';
+                        loader.style.opacity = '1';
+                        loader.style.visibility = 'visible';
+                    }
+                }
+                
+                checkDeepLink();
+            }
+        }
+
+        function openZoomModal(src) {
+            document.getElementById('zoomedImage').src = src;
+            document.getElementById('imageZoomModal').style.display = 'flex';
+            const detailModal = document.getElementById('detailModal');
+            if (detailModal) {
+                detailModal.style.overflow = 'hidden';
+            }
+        }
+
+        function closeZoomModal() {
+            document.getElementById('imageZoomModal').style.display = 'none';
+            document.getElementById('zoomedImage').src = '';
+            const detailModal = document.getElementById('detailModal');
+            if (detailModal) {
+                detailModal.style.overflow = 'auto';
+            }
+            
+            currentZoomScale = 1;
+            translateX = 0;
+            translateY = 0;
+            document.getElementById('zoomedImage').style.transform = 'translate(0px, 0px) scale(1)';
+        }
+
+        function applyGameFilterRealtime(game) {
+            let filtered = produkData.filter(p => (p.kategori || '').toLowerCase().includes(game.toLowerCase()));
+            renderKatalog(filtered);
+        }
+
+        function getTierColor(tier) {
+            const t = (tier || '').toLowerCase();
+            if (t.includes('pelajar')) return 'bg-blue-600/20 text-blue-400';
+            if (t.includes('premium') || t.includes('sultan')) return 'bg-yellow-500/20 text-yellow-500';
+            return 'bg-slate-600/20 text-slate-400';
+        }
+
+        function triggerFadeUpAnimation(containerId) {
+            const container = document.getElementById(containerId);
+            if (container && containerId !== 'container-produk-terbaru') {
+                container.classList.remove('animate-near');
+                void container.offsetWidth; 
+                container.classList.add('animate-near');
+            }
+        }
+
+        function parseHarga(hargaStr) {
+            if (!hargaStr) return 0;
+            const cleanStr = hargaStr.toString().replace(/[^0-9]/g, '');
+            return parseInt(cleanStr, 10) || 0;
+        }
+
+        function renderKatalog(filterData = null) {
+            if (!isFirebaseLoaded) return; 
+
+            const container = document.getElementById('container-katalog');
+            const loadMoreContainer = document.getElementById('container-load-more');
+            const textRemaining = document.getElementById('text-remaining-items');
+            
+            if (!container) return;
+
+            const titleEl = document.getElementById('katalog-title');
+            if (titleEl) {
+                if (window.selectedGameContext) {
+                    const lowContext = window.selectedGameContext.toLowerCase();
+                    if (lowContext.includes('free fire') || lowContext === 'ff') {
+                        titleEl.innerText = 'Free Fire';
+                    } else if (lowContext.includes('mobile legends') || lowContext.includes('mlbb') || lowContext === 'ml') {
+                        titleEl.innerText = 'Mobile Legends';
+                    } else {
+                        titleEl.innerText = window.selectedGameContext;
+                    }
+                } else {
+                    titleEl.innerText = 'Katalog';
+                }
+            }
+            
+            let baseData = filterData || produkData;
+            
+            if (!filterData && window.selectedGameContext) {
+                baseData = baseData.filter(p => (p.kategori || '').toLowerCase().includes(window.selectedGameContext.toLowerCase()));
+            }
+
+            if (activeTier !== 'Semua') {
+                baseData = baseData.filter(p => {
+                    let t = (p.tier || 'reguler').toLowerCase();
+                    if(t === 'sultan') t = 'premium';
+                    return t === activeTier.toLowerCase();
+                });
+            }
+
+            if (activeStatus !== 'semua') {
+                baseData = baseData.filter(p => {
+                    const isSold = p.status === 'sold' || p.status === 'terjual';
+                    if (activeStatus === 'terjual') return isSold;
+                    if (activeStatus === 'tersedia') return !isSold;
+                    return true;
+                });
+            }
+
+            if (activeSort === 'terpopuler') {
+                currentFilteredData = baseData.slice().reverse();
+            } else if (activeSort === 'terbaru') {
+                currentFilteredData = baseData.slice().reverse(); 
+            } else if (activeSort === 'murah') {
+                currentFilteredData = baseData.slice().sort((a, b) => parseHarga(a.harga) - parseHarga(b.harga));
+            } else if (activeSort === 'mahal') {
+                currentFilteredData = baseData.slice().sort((a, b) => parseHarga(b.harga) - parseHarga(a.harga));
+            } else if (activeSort === 'az') {
+                currentFilteredData = baseData.slice().sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
+            } else if (activeSort === 'za') {
+                currentFilteredData = baseData.slice().sort((a, b) => (b.nama || '').localeCompare(a.nama || ''));
+            }
+
+            container.innerHTML = '';
+            document.getElementById('total-katalog').innerText = `${currentFilteredData.length} produk`;
+
+            if (currentFilteredData.length === 0) {
+                container.innerHTML = '<div class="col-span-2 text-center py-10 text-slate-500 text-xs font-bold">Produk belum tersedia</div>';
+                if(loadMoreContainer) loadMoreContainer.classList.add('hidden');
+                return;
+            }
+
+            let itemsToRender = currentFilteredData;
+            if (isLimitActive && currentFilteredData.length > 20) {
+                itemsToRender = currentFilteredData.slice(0, 20);
+                
+                if (loadMoreContainer && textRemaining) {
+                    const remaining = currentFilteredData.length - 20;
+                    textRemaining.innerText = `(${remaining} produk tersisa)`;
+                    loadMoreContainer.classList.remove('hidden');
+                }
+            } else {
+                if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
+            }
+
+            itemsToRender.forEach((p, index) => {
+                const isSold = p.status === 'sold' || p.status === 'terjual';
+                const originalIndex = produkData.findIndex(item => item.firebaseKey === p.firebaseKey);
+                
+                const clickAction = (!isFirebaseLoaded) ? '' : `onclick="openDetail(${originalIndex})"`;
+                const cursorStyle = (!isFirebaseLoaded) ? '' : 'cursor-pointer';
+                
+                const mainImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/300';
+                
+                let tierDisplay = p.tier || 'Reguler';
+                if(tierDisplay.toLowerCase() === 'sultan') tierDisplay = 'Premium';
+                const tierColor = getTierColor(tierDisplay);
+
+                let kategoriDisplay = p.kategori || 'Game';
+                const lowerKategori = kategoriDisplay.toLowerCase();
+                if (lowerKategori.includes('mobile legends')) {
+                    kategoriDisplay = 'MLBB';
+                } else if (lowerKategori.replace(/\s/g, '') === 'freefire') {
+                    kategoriDisplay = 'Free Fire';
+                }
+                
+                const delay = (index % 2 === 0) ? '0s' : '0.1s';
+                const animationStyle = `animation-delay: ${delay};`;
+
+                container.innerHTML += `
+                    <div ${clickAction} style="${animationStyle}" class="card-prof overflow-hidden relative ${isSold ? 'is-sold' : ''} animate-near ${cursorStyle}">
+                        <div class="img-container">
+                            <img src="${mainImg}" loading="lazy" class="img-grayscale" alt="${p.nama}" onerror="this.src='https://via.placeholder.com/300'">
+                            <div class="game-badge">${kategoriDisplay}</div>
+                            ${isSold ? `<div class="sold-overlay"><div class="sold-badge">TERJUAL</div></div>` : ''}
+                        </div>
+                        <div class="p-3">
+                            <div class="${tierColor} text-[10px] px-2 py-1 rounded-md font-bold mb-1.5 uppercase w-fit">${tierDisplay}</div>
+                            <h3 class="font-bold text-[11px] truncate mt-0.5">${p.nama}</h3>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="${isSold ? 'line-through text-slate-500' : 'text-blue-500'} font-bold text-[11px]">${p.harga}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function showAllKatalogItems() {
+            isLimitActive = false;
+            renderKatalog(currentFilteredData);
+        }
+
+        function renderProdukTerbaru() {
+            const containerTerbaru = document.getElementById('container-produk-terbaru');
+            if (!containerTerbaru) return;
+            
+            const dataTersedia = produkData.filter(p => p.status !== 'sold' && p.status !== 'terjual');
+            const dataTerbaru = dataTersedia.slice().reverse().slice(0, 4);
+            containerTerbaru.innerHTML = '';
+
+            let finalData = dataTerbaru;
+            if (finalData.length === 0) {
+                const backup = localStorage.getItem('produkAcelis');
+                if (backup) {
+                    const parsedBackup = JSON.parse(backup);
+                    finalData = parsedBackup.filter(p => p.status !== 'sold' && p.status !== 'terjual').slice().reverse().slice(0, 4);
+                }
+            }
+
+            if (finalData.length === 0) {
+                if (!isFirebaseLoaded) return; 
+                containerTerbaru.innerHTML = '';
+                return;
+            }
+
+            finalData.forEach((p, index) => {
+                const originalIndex = produkData.findIndex(item => item.nama === p.nama && item.harga === p.harga);
+                const clickAction = (!isFirebaseLoaded) ? '' : `onclick="openDetail(${originalIndex})"`;
+                const cursorStyle = (!isFirebaseLoaded) ? '' : 'cursor-pointer';
+                const mainImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/300';
+                
+                let tierDisplay = p.tier || 'Reguler';
+                if(tierDisplay.toLowerCase() === 'sultan') tierDisplay = 'Premium';
+                const tierColor = getTierColor(tierDisplay);
+
+                let kategoriDisplay = p.kategori || 'Game';
+                const lowerKategori = kategoriDisplay.toLowerCase();
+                if (lowerKategori.includes('mobile legends')) {
+                    kategoriDisplay = 'MLBB';
+                } else if (lowerKategori.replace(/\s/g, '') === 'freefire') {
+                    kategoriDisplay = 'Free Fire';
+                }
+
+                containerTerbaru.innerHTML += `
+                    <div ${clickAction} class="card-prof overflow-hidden relative ${cursorStyle}">
+                        <div class="img-container">
+                            <img src="${mainImg}" loading="lazy" class="img-grayscale" alt="${p.nama}" onerror="this.src='https://via.placeholder.com/300'">
+                            <div class="game-badge">${kategoriDisplay}</div>
+                        </div>
+                        <div class="p-3">
+                            <div class="${tierColor} text-[10px] px-2 py-1 rounded-md font-bold mb-1.5 uppercase w-fit">${tierDisplay}</div>
+                            <h3 class="font-bold text-[11px] truncate mt-0.5">${p.nama}</h3>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-blue-500 font-bold text-[11px]">${p.harga}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleLikeButton(btn, firebaseKey) {
+            const isLiked = likedProducts[firebaseKey];
+            const dbRef = firebase.database().ref('produkAcelis/' + firebaseKey + '/likes');
+            
+            if (isLiked) {
+                delete likedProducts[firebaseKey];
+                btn.classList.remove('text-red-500', 'bg-red-500/10', 'border-red-500/30');
+                btn.classList.add('text-slate-400', 'bg-slate-800', 'border-slate-700/40');
+                
+                dbRef.transaction(function(currentLikes) {
+                    return (currentLikes || 1) - 1;
+                });
+            } else {
+                likedProducts[firebaseKey] = true;
+                btn.classList.remove('text-slate-400', 'bg-slate-800', 'border-slate-700/40');
+                btn.classList.add('text-red-500', 'bg-red-500/10', 'border-red-500/30');
+                
+                dbRef.transaction(function(currentLikes) {
+                    return (currentLikes || 0) + 1;
+                });
+            }
+            localStorage.setItem('likedProductsAcelis', JSON.stringify(likedProducts));
+        }
+
+        function applySort(type) {
+            isLimitActive = true; 
+            document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+            if (type === 'Semua') {
+                const allChip = document.getElementById('chip-semua');
+                if(allChip) allChip.classList.add('active');
+            }
+            
+            let filtered = [...produkData];
+            if (window.selectedGameContext) {
+                filtered = produkData.filter(p => (p.kategori || '').toLowerCase().includes(window.selectedGameContext.toLowerCase()));
+            }
+            renderKatalog(filtered);
+            triggerFadeUpAnimation('container-katalog');
+        }
+
+        function applyGameFilter(game) {
+            isLimitActive = true; 
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            const allChip = document.getElementById('chip-semua');
+            if (allChip) allChip.classList.add('active');
+
+            let filtered = produkData.filter(p => (p.kategori || '').toLowerCase().includes(game.toLowerCase()));
+            renderKatalog(filtered);
+            triggerFadeUpAnimation('container-katalog');
+        }
+
+        function resetFilter() {
+            document.getElementById('searchInput').value = '';
+            document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+            const allChip = document.getElementById('chip-semua');
+            if(allChip) allChip.classList.add('active');
+            const chipContainer = document.getElementById('chip-container');
+            if(chipContainer) chipContainer.scrollLeft = 0;
+        }
+
+        function openCustomFilterModal() {
+            document.getElementById('customFilterModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            updateModalButtonsUI();
+        }
+
+        function closeCustomFilterModal() {
+            document.getElementById('customFilterModal').style.display = 'none';
+            if (document.getElementById('detailModal').style.display !== 'block') {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function setSortOption(sortType) {
+            activeSort = sortType;
+            updateModalButtonsUI();
+        }
+
+        function setTierOption(tierType) {
+            activeTier = tierType;
+            updateModalButtonsUI();
+        }
+
+        function setStatusOption(statusType) {
+            activeStatus = statusType;
+            updateModalButtonsUI();
+        }
+
+        function updateModalButtonsUI() {
+            const sortOpts = ['terpopuler', 'terbaru', 'murah', 'mahal', 'az', 'za'];
+            sortOpts.forEach(opt => {
+                const btn = document.getElementById(`opt-sort-${opt}`);
+                if(btn) btn.classList.remove('active');
+            });
+            const activeSortBtn = document.getElementById(`opt-sort-${activeSort}`);
+            if(activeSortBtn) activeSortBtn.classList.add('active');
+
+            const tierOpts = ['Semua', 'pelajar', 'reguler', 'premium'];
+            tierOpts.forEach(opt => {
+                const btn = document.getElementById(`opt-tier-${opt}`);
+                if(btn) btn.classList.remove('active');
+            });
+            const activeTierBtn = document.getElementById(`opt-tier-${activeTier}`);
+            if(activeTierBtn) activeTierBtn.classList.add('active');
+
+            const statusOpts = ['semua', 'terjual', 'tersedia'];
+            statusOpts.forEach(opt => {
+                const btn = document.getElementById(`opt-status-${opt}`);
+                if(btn) btn.classList.remove('active');
+            });
+            const activeStatusBtn = document.getElementById(`opt-status-${activeStatus}`);
+            if(activeStatusBtn) activeStatusBtn.classList.add('active');
+        }
+
+        function resetCustomFilters() {
+            activeSort = 'terpopuler';
+            activeTier = 'Semua';
+            activeStatus = 'semua';
+            updateModalButtonsUI();
+        }
+
+        function applyCustomFilters() {
+            isLimitActive = true;
+            
+            let filtered = [...produkData];
+            if (window.selectedGameContext) {
+                filtered = produkData.filter(p => (p.kategori || '').toLowerCase().includes(window.selectedGameContext.toLowerCase()));
+            }
+
+            renderKatalog(filtered);
+            triggerFadeUpAnimation('container-katalog');
+            closeCustomFilterModal();
+        }
+
+        function renderRekomendasiModal(currentProduct) {
+            const container = document.getElementById('container-rekomendasi-modal');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const currentKategori = (currentProduct.kategori || '').toLowerCase();
+            
+            const rekomendasiData = produkData.filter(p => {
+                const pKategori = (p.kategori || '').toLowerCase();
+                const isSameGame = pKategori === currentKategori || 
+                                   (currentKategori.includes('free fire') && pKategori.includes('free fire')) ||
+                                   (currentKategori.includes('mobile legends') && pKategori.includes('mobile legends'));
+                const isDifferentProduct = (p.nama !== currentProduct.nama || p.harga !== currentProduct.harga);
+                const isNotSold = p.status !== 'sold' && p.status !== 'terjual';
+                return isSameGame && isDifferentProduct && isNotSold;
+            }).slice(0, 6);
+
+            if (rekomendasiData.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center py-4 text-slate-500 text-xs">Tidak ada rekomendasi produk sejenis</div>`;
+                return;
+            }
+
+            rekomendasiData.forEach((p) => {
+                const originalIndex = produkData.findIndex(item => item.nama === p.nama && item.harga === p.harga);
+                const mainImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/300';
+                
+                let tierDisplay = p.tier || 'Reguler';
+                if(tierDisplay.toLowerCase() === 'sultan') tierDisplay = 'Premium';
+                const tierColor = getTierColor(tierDisplay);
+
+                let kategoriDisplay = p.kategori || 'Game';
+                const lowerKategori = kategoriDisplay.toLowerCase();
+                if (lowerKategori.includes('mobile legends')) {
+                    kategoriDisplay = 'MLBB';
+                } else if (lowerKategori.replace(/\s/g, '') === 'freefire') {
+                    kategoriDisplay = 'Free Fire';
+                }
+
+                container.innerHTML += `
+                    <div onclick="openDetail(${originalIndex})" class="card-prof overflow-hidden relative cursor-pointer transform active:scale-95 transition-all">
+                        <div class="img-container">
+                            <img src="${mainImg}" loading="lazy" alt="${p.nama}" onerror="this.src='https://via.placeholder.com/300'">
+                            <div class="game-badge">${kategoriDisplay}</div>
+                        </div>
+                        <div class="p-3">
+                            <div class="${tierColor} text-[10px] px-2 py-1 rounded-md font-bold mb-1.5 uppercase w-fit">${tierDisplay}</div>
+                            <h3 class="font-bold text-[11px] truncate mt-0.5">${p.nama}</h3>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-blue-500 font-bold text-[11px]">${p.harga}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openDetail(index) {
+            if (!isFirebaseLoaded || !produkData || produkData.length === 0) return; 
+
+            const data = produkData[index];
+            if (!data) return;
+            
+            const isSold = data.status === 'sold' || data.status === 'terjual';
+            
+            const fKey = data.firebaseKey;
+            currentOpenProductKey = fKey;
+            sessionStorage.setItem('activeProductKey', fKey);
+
+            const detailLoader = document.getElementById('detail-loader');
+            if (detailLoader) {
+                detailLoader.style.display = 'flex';
+                detailLoader.style.opacity = '1';
+                detailLoader.style.visibility = 'visible';
+            }
+
+            const modal = document.getElementById('detailModal');
+            const imgContainer = document.getElementById('modalImages');
+            const body = document.getElementById('modalBody');
+            const shareBtn = document.getElementById('btnShare');
+            const breadNama = document.getElementById('breadNama');
+            
+            breadNama.innerText = data.nama;
+
+            currentImgIndex = 0;
+            imgContainer.style.transform = `translateX(0)`;
+            imgContainer.innerHTML = '';
+            
+            const images = data.images && data.images.length > 0 ? data.images : ['https://via.placeholder.com/300'];
+            activeImagesCount = images.length;
+            images.forEach(img => {
+                if (isSold) {
+                    imgContainer.innerHTML += `
+                        <div class="modal-img-wrapper" style="position: relative;">
+                            <img src="${img}" loading="lazy" style="width: 100%; height: 100%; object-fit: contain; filter: grayscale(1); opacity: 0.4; pointer-events: none;" onerror="this.src='https://via.placeholder.com/300'">
+                            <div class="sold-overlay"><div class="sold-badge">TERJUAL</div></div>
+                        </div>`;
+                } else {
+                    imgContainer.innerHTML += `<div class="modal-img-wrapper"><img src="${img}" loading="lazy" onclick="openZoomModal(this.src)" style="cursor: zoom-in; pointer-events: auto;" onerror="this.src='https://via.placeholder.com/300'"></div>`;
+                }
+            });
+
+            let tierDisplay = data.tier || 'Reguler';
+            if(tierDisplay.toLowerCase() === 'sultan') tierDisplay = 'Premium';
+            const tierColor = getTierColor(tierDisplay);
+
+            if (isSold) {
+                body.innerHTML = `
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block ${tierColor} text-[10px] px-2 py-1 rounded-md font-bold uppercase w-fit">${tierDisplay}</span>
+                            <span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider bg-blue-500/10 px-2 py-1 rounded-md border border-blue-500/20">Official Acelis</span>
+                        </div>
+                        <h2 class="text-xl font-black text-white mt-1">${data.nama}</h2>
+                    </div>
+                `;
+            } else {
+                let itemNamaPenjual = data.namaPenjual || namaPenjualGlobal;
+                let itemProfilPenjual = data.profilPenjual || fotoProfilAdminGlobal;
+
+                let waLink = "https://wa.me/6285707356154"; 
+                if (itemNamaPenjual.includes("AC DAFFA")) {
+                    waLink = "https://wa.me/6281927636945";
+                } else if (itemNamaPenjual.includes("AC ACELIS")) {
+                    waLink = "https://wa.me/6285707356154";
+                }
+
+                let avatarHTML = `
+                    <div class="w-10 h-10 rounded-full bg-[#1e293b] border border-slate-700/80 flex items-center justify-center flex-shrink-0 shadow-md overflow-hidden select-none">
+                        <span class="text-slate-500 text-[8px] font-bold">No PP</span>
+                    </div>
+                `;
+                if(itemProfilPenjual) {
+                    avatarHTML = `
+                        <div class="w-10 h-10 rounded-full border-[2.5px] border-blue-400 flex-shrink-0 shadow-[0_0_10px_rgba(96,165,250,0.4)] overflow-hidden select-none">
+                            <img src="${itemProfilPenjual}" class="w-full h-full object-cover">
+                        </div>
+                    `;
+                }
+                
+                let currentViews = data.views || 0;
+                if (!sessionStorage.getItem('viewed_' + fKey)) {
+                    firebase.database().ref('produkAcelis/' + fKey + '/views').transaction(function(v) {
+                        return (v || 0) + 1;
+                    });
+                    sessionStorage.setItem('viewed_' + fKey, 'true');
+                    currentViews += 1;
+                }
+
+                const isLiked = likedProducts[fKey] ? true : false;
+                let currentLikes = data.likes || 0; 
+                
+                const likeBtnClasses = isLiked 
+                    ? 'text-red-500 bg-red-500/10 border-red-500/30' 
+                    : 'text-slate-400 bg-slate-800 border-slate-700/40';
+
+                let adminProfileHTML = `
+                    <div class="flex items-center justify-between bg-slate-900/60 border border-slate-800 p-3 rounded-2xl mt-3">
+                        <div class="flex items-center gap-3">
+                            ${avatarHTML}
+                            <div class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide border border-slate-700/50 min-w-[50px] min-h-[24px]">
+                                ${itemNamaPenjual}
+                            </div>
+                        </div>
+                        <button onclick="event.stopPropagation(); toggleLikeButton(this, '${fKey}');" class="w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 transition-all border ${likeBtnClasses}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                        </button>
+                    </div>
+                `;
+
+                body.innerHTML = `
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block ${tierColor} text-[10px] px-2 py-1 rounded-md font-bold uppercase w-fit">${tierDisplay}</span>
+                            <span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider bg-blue-500/10 px-2 py-1 rounded-md border border-blue-500/20">Official Acelis</span>
+                        </div>
+                        <h2 class="text-xl font-black text-white mt-1">${data.nama}</h2>
+                    </div>
+                    
+                    ${adminProfileHTML}
+
+                    <div class="px-1 py-1 pt-2 mb-2">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-0">Harga Akun</p>
+                        <p class="text-xl font-black text-blue-500">${data.harga}</p>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-800/50 mb-4">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1.5">Deskripsi Akun</p>
+                        <div class="text-xs text-slate-300 leading-relaxed whitespace-pre-line mt-0">
+                            ${data.deskripsi || 'Tidak ada deskripsi'}
+                        </div>
+                    </div>
+
+                    <a href="${waLink}?text=Halo Admin, saya ingin membeli akun: ${data.nama}" class="w-full block text-center bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-2xl font-extrabold shadow-lg shadow-blue-900/20 transition-all mb-4">Beli Sekarang</a>
+
+                    <div class="grid grid-cols-3 gap-3 pt-4 border-t border-slate-800/50">
+                        <div class="bg-slate-900 border border-slate-800 p-2 rounded-xl flex flex-col items-center justify-center text-center aspect-video">
+                            <div class="w-7 h-7 rounded-full border-[0.5px] border-blue-400/50 flex items-center justify-center mb-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-400"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                            <span class="text-[8px] text-slate-400 block font-bold uppercase">Dilihat</span>
+                            <span class="text-[10px] font-bold text-white mt-0.5" id="detail-view-counter">${currentViews}</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 p-2 rounded-xl flex flex-col items-center justify-center text-center aspect-video">
+                            <div class="w-7 h-7 rounded-full border-[0.5px] border-red-500/50 flex items-center justify-center mb-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-500"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                            </div>
+                            <span class="text-[8px] text-slate-400 block font-bold uppercase">Like</span>
+                            <span class="text-[10px] font-bold text-white mt-0.5" id="detail-like-counter">${currentLikes}</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 p-2 rounded-xl flex flex-col items-center justify-center text-center aspect-video">
+                            <div class="w-7 h-7 rounded-full border-[0.5px] border-green-400/50 flex items-center justify-center mb-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-400"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            </div>
+                            <span class="text-[8px] text-slate-400 block font-bold uppercase">Stok</span>
+                            <span class="text-[10px] font-bold text-white mt-0.5">1</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            shareBtn.onclick = () => {
+                const shareUrl = window.location.origin + window.location.pathname + `?id=${data.firebaseKey || ''}`;
+                if (navigator.share) {
+                    navigator.share({ title: data.nama, text: `Cek akun ${data.nama} di ACELIS MARKET! Harga: ${data.harga}`, url: shareUrl });
+                }
+            };
+
+            updateNavButtons();
+            
+            const rekomSection = document.getElementById('modalRekomendasiSection');
+            if (rekomSection) {
+                if (isSold) {
+                    rekomSection.style.display = 'none';
+                } else {
+                    rekomSection.style.display = 'block';
+                    renderRekomendasiModal(data);
+                }
+            }
+            
+            modal.scrollTop = 0;
+
+            setTimeout(() => {
+                if (detailLoader) {
+                    detailLoader.style.opacity = '0';
+                    detailLoader.style.visibility = 'hidden';
+                    setTimeout(() => { detailLoader.style.display = 'none'; }, 400);
+                }
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }, 650);
+        }
+
+        function nextImage() { 
+            if (activeImagesCount > 1 && currentImgIndex < activeImagesCount - 1) { 
+                currentImgIndex++; 
+                updateImagePos(); 
+            } 
+        }
+
+        function prevImage() { 
+            if (activeImagesCount > 1 && currentImgIndex > 0) { 
+                currentImgIndex--; 
+                updateImagePos(); 
+            } 
+        }
+
+        function updateImagePos() { 
+            document.getElementById('modalImages').style.transform = `translateX(-${currentImgIndex * 100}%)`; 
+            updateNavButtons();
+        }
+
+        function updateNavButtons() {
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            
+            if(currentImgIndex === 0) btnPrev.classList.add('disabled');
+            else btnPrev.classList.remove('disabled');
+            
+            if(currentImgIndex === activeImagesCount - 1) btnNext.classList.add('disabled');
+            else btnNext.classList.remove('disabled');
+        }
+
+        function closeModal() {
+            currentOpenProductKey = null;
+            sessionStorage.removeItem('activeProductKey');
+            document.getElementById('detailModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetFilter();
+            
+            const newUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+
+            const activePage = sessionStorage.getItem('activePage') || 'page-home';
+            if (activePage === 'page-home') {
+                renderProdukTerbaru();
+            } else {
+                isLimitActive = true; 
+                if (window.selectedGameContext) {
+                    let filtered = produkData.filter(p => (p.kategori || '').toLowerCase().includes(window.selectedGameContext.toLowerCase()));
+                    renderKatalog(filtered);
+                } else {
+                    renderKatalog();
+                }
+                triggerFadeUpAnimation('container-katalog');
+            }
+        }
+
+        function openGameSelectionModal() {
+            document.getElementById('gameSelectionModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGameSelectionModal() {
+            document.getElementById('gameSelectionModal').style.display = 'none';
+            if (document.getElementById('detailModal').style.display !== 'block' && !document.getElementById('page-history').classList.contains('page-active')) {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function selectGameCategory(game) {
+            window.selectedGameContext = game;
+            closeGameSelectionModal();
+            switchPage('page-history');
+            
+            let filtered = produkData.filter(p => (p.kategori || '').toLowerCase().includes(game.toLowerCase()));
+            renderKatalog(filtered);
+            triggerFadeUpAnimation('container-katalog');
+        }
+
+        function switchPage(pageId) {
+            resetFilter();
+            isLimitActive = true; 
+            
+            if (pageId === 'page-history' && !isFirebaseLoaded) {
+                const skel = document.getElementById('skeleton-history');
+                const act = document.getElementById('actual-history-content');
+                if (skel && act) {
+                    skel.classList.replace('hidden', 'block');
+                    act.classList.replace('block', 'hidden');
+                }
+            }
+
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
+            const newPage = document.getElementById(pageId);
+            if(newPage) newPage.classList.add('page-active');
+            
+            if(pageId === 'page-history') {
+                if (window.selectedGameContext) {
+                    let filtered = produkData.filter(p => (p.kategori || '').toLowerCase().includes(window.selectedGameContext.toLowerCase()));
+                    renderKatalog(filtered);
+                } else {
+                    renderKatalog();
+                }
+                triggerFadeUpAnimation('container-katalog');
+            } else if(pageId === 'page-home') {
+                renderProdukTerbaru();
+            }
+
+            document.querySelectorAll('.bottom-nav-item').forEach(n => { n.classList.remove('active'); n.classList.add('text-slate-400'); });
+            const navId = 'nav-' + pageId.split('-')[1];
+            const activeNav = document.getElementById(navId);
+            if(activeNav) { 
+                activeNav.classList.remove('text-slate-400'); 
+                activeNav.classList.add('active'); 
+            }
+            
+            sessionStorage.setItem('activePage', pageId);
+            window.scrollTo({ top: 0 });
+        }
+
+        function handleSearchEnter(event) {
+            if (event.key === 'Enter') {
+                isLimitActive = true; 
+                window.selectedGameContext = null;
+                const val = document.getElementById('searchInput').value.toLowerCase();
+                const filtered = produkData.filter(p => 
+                    (p.nama && p.nama.toLowerCase().includes(val)) || 
+                    (p.kategori && p.kategori.toLowerCase().includes(val)) ||
+                    (p.deskripsi && p.deskripsi.toLowerCase().includes(val))
+                );
+                
+                document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
+                document.getElementById('page-history').classList.add('page-active');
+                
+                document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+                const allChip = document.getElementById('chip-semua');
+                if(allChip) allChip.classList.add('active');
+                
+                const chipContainer = document.getElementById('chip-container');
+                if(chipContainer) chipContainer.scrollLeft = 0;
+                
+                renderKatalog(filtered);
+                triggerFadeUpAnimation('container-katalog');
+                
+                document.querySelectorAll('.bottom-nav-item').forEach(n => { n.classList.remove('active'); n.classList.add('text-slate-400'); });
+                const activeNav = document.getElementById('nav-history');
+                if(activeNav) { activeNav.classList.remove('text-slate-400'); activeNav.classList.add('active'); }
+                sessionStorage.setItem('activePage', 'page-history');
+
+                window.scrollTo({ top: 0 });
+            }
+        }
+
+        const zoomImgEl = document.getElementById('zoomedImage');
+        let currentZoomScale = 1;
+        let initialPinchDist = 0;
+        let translateX = 0;
+        let translateY = 0;
+        let startX = 0;
+        let startY = 0;
+        let isDragging = false;
+
+        zoomImgEl.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialPinchDist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                isDragging = false;
+            } else if (e.touches.length === 1 && currentZoomScale > 1) {
+                startX = e.touches[0].pageX;
+                startY = e.touches[0].pageY;
+                isDragging = true;
+            }
+        });
+
+        zoomImgEl.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                const scaleChange = currentDist / initialPinchDist;
+                currentZoomScale = Math.min(Math.max(1, currentZoomScale * scaleChange), 5); 
+                
+                if (currentZoomScale <= 1) {
+                    currentZoomScale = 1;
+                    translateX = 0;
+                    translateY = 0;
+                } else {
+                    const marginX = 20; 
+                    const marginY = 50;
+                    const maxTranslateX = ((currentZoomScale - 1) * window.innerWidth / 2) + marginX;
+                    const maxTranslateY = ((currentZoomScale - 1) * window.innerHeight / 2) + marginY;
+                    translateX = Math.max(-maxTranslateX, Math.min(translateX, maxTranslateX));
+                    translateY = Math.max(-maxTranslateY, Math.min(translateY, maxTranslateY));
+                }
+
+                zoomImgEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoomScale})`;
+                zoomImgEl.style.transition = 'none';
+                initialPinchDist = currentDist;
+            } else if (e.touches.length === 1 && isDragging && currentZoomScale > 1) {
+                e.preventDefault();
+                const currentX = e.touches[0].pageX;
+                const currentY = e.touches[0].pageY;
+                
+                translateX += (currentX - startX);
+                translateY += (currentY - startY);
+                
+                const marginX = 20; 
+                const marginY = 50;
+                const maxTranslateX = ((currentZoomScale - 1) * window.innerWidth / 2) + marginX;
+                const maxTranslateY = ((currentZoomScale - 1) * window.innerHeight / 2) + marginY;
+                
+                translateX = Math.max(-maxTranslateX, Math.min(translateX, maxTranslateX));
+                translateY = Math.max(-maxTranslateY, Math.min(translateY, maxTranslateY));
+
+                zoomImgEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoomScale})`;
+                startX = currentX;
+                startY = currentY;
+            }
+        }, { passive: false });
+
+        zoomImgEl.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) {
+                isDragging = false;
+            }
+            if (e.touches.length === 1 && currentZoomScale > 1) {
+                startX = e.touches[0].pageX;
+                startY = e.touches[0].pageY;
+                isDragging = true;
+            }
+            if (currentZoomScale <= 1) {
+                currentZoomScale = 1;
+                translateX = 0;
+                translateY = 0;
+                zoomImgEl.style.transition = 'transform 0.2s ease';
+                zoomImgEl.style.transform = `translate(0px, 0px) scale(1)`;
+            }
+        });
+
+        window.onload = () => { 
+            loadData(); 
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const savedPage = sessionStorage.getItem('activePage');
+            const savedProductKey = sessionStorage.getItem('activeProductKey');
+            
+            if (urlParams.get('id') || savedProductKey) {
+                switchPage(savedPage || 'page-history');
+                const detailLoader = document.getElementById('detail-loader');
+                if (detailLoader) {
+                    detailLoader.style.display = 'flex';
+                    detailLoader.style.opacity = '1';
+                    detailLoader.style.visibility = 'visible';
+                }
+            } else if (savedPage) {
+                switchPage(savedPage);
+            } else {
+                switchPage('page-home');
+            }
+        };
+    </script>
+</body>
+</html>
